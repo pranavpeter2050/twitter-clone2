@@ -3,7 +3,8 @@
         class="
             w-full
             lg:inline-block
-            hover:bg-gray-900p-2
+            hover:bg-gray-900
+            p-2
             px-4
             lg:pr-6
             rounded-full
@@ -39,10 +40,10 @@
     let icon = null
 
     if (iconString.value === 'Home') icon = Home
-    if (iconString.value === 'Pound') icon = Pound
-    if (iconString.value === 'BellOutline') icon = BellOutline
-    if (iconString.value === 'EmailOutline') icon = EmailOutline
-    if (iconString.value === 'AccountOutline') icon = AccountOutline
+    if (iconString.value === 'Explore') icon = Pound
+    if (iconString.value === 'Notifications') icon = BellOutline
+    if (iconString.value === 'Messages') icon = EmailOutline
+    if (iconString.value === 'Profile') icon = AccountOutline
 </script>
 
 <style lang="scss" scoped>
