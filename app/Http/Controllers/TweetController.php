@@ -21,16 +21,6 @@ class TweetController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -38,51 +28,54 @@ class TweetController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $file = null;
+        $extension = null;
+        $fileName = null;
+        $path = '';
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Tweet  $tweet
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Tweet $tweet)
-    {
-        //
-    }
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $request->validate(['file' => 'required|mimes:jpg,jpeg,png,mp4' ]);
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '.' . $extension;
+            $extension === 'mp4' ? $path = '/videos/' : '/pics/';
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Tweet  $tweet
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Tweet $tweet)
-    {
-        //
-    }
+        $tweet = new Tweet;
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Tweet  $tweet
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Tweet $tweet)
-    {
-        //
+        $tweet->name = 'Johnie Doe';
+        $tweet->handle = '@johnied';
+        $tweet->image = 'https://yt3.ggpht.com/e9o-24_frmNSSVvjS47rT8qCHgsHNiedqgXbzmrmpsj6H1ketcufR1B9vLXTZRa30krRksPj=s88-c-k-c0x00ffffff-no-rj';
+        $tweet->tweet = $request->input('tweet');
+        if ($fileName) {
+            $tweet->file = $path . $fileName;
+            $tweet->is_video = $extension === 'mp4' ? true : false;
+            $file->move(public_path() . $path, $fileName);
+        }
+        $tweet->comments = rand(5, 500);
+        $tweet->retweets = rand(5, 500);
+        $tweet->likes = rand(5, 500);
+        $tweet->analytics = rand(5, 500);
+
+        $tweet->save();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Tweet  $tweet
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tweet $tweet)
+    public function destroy($id)
     {
-        //
+        $tweet = Tweet::find($id);
+
+        if(!is_null($tweet->file) && file_exists(public_path() . $tweet->file)) {
+            unlink(public_path() . $tweet->file);
+        }
+
+        $tweet->delete();
+
+        return redirect()->route('tweets.index');
     }
 }
